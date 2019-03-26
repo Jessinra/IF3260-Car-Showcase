@@ -63,8 +63,9 @@ def process_tokens(tokens):
     token = next_or(tokens)
     while token is not None:
         if not token_match(token, '\n'):
-            v = int(token)
-            indices.append(v - 1) # 0-based indices please
+            v = int(token) - 1 # 0-based indices please
+            assert v >= 0 and v < len(vertices)
+            indices.append(v)
         token = next_or(tokens)
     return RawMesh(width, height, 'triangles', vertices, indices)
 
@@ -88,13 +89,15 @@ def pad_list(l, n, x=0.0):
 
 def cook_mesh(raw_mesh):
     max_dim = max(raw_mesh.width, raw_mesh.height)
+    def map_coord(v):
+        v = (v / (max_dim / 2.0)) - 1.0
+        return v
     coord_elems = max(len(vertex.coords) for vertex in raw_mesh.vertices)
     col_elems = max(len(vertex.colour) for vertex in raw_mesh.vertices)
     vertices = []
     for vertex in raw_mesh.vertices:
         vertices.append(
-            pad_list(map(lambda v: float(v)/max_dim, vertex.coords),
-                     coord_elems) +
+            pad_list(map(map_coord, vertex.coords), coord_elems) +
             pad_list(map(lambda v: float(v)/255, vertex.colour), col_elems))
     mode = raw_mesh.mode
     indices = raw_mesh.indices
