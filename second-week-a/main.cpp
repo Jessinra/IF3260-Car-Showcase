@@ -30,14 +30,16 @@ int main() {
     w.deleteShader();
     // Testing
     Triangle* t = new Triangle();
-    t->setColor();
-    t->setVertex();
     w.addObject(t);
     w.bindBuffer();
     w.run();
-  } catch (std::string error) {
+  } catch (const std::string &error) {
     glfwTerminate();
     printf("ERROR:\n%s\n", error.c_str());
     exit(1);
-  } 
+  } catch (const char *error) {
+    glfwTerminate();
+    printf("ERROR:\n%s\n", error);
+    exit(1);
+  }
 }
