@@ -6,15 +6,13 @@
 
 class BaseObject {
 protected:
-  int vsize, csize;
-  unsigned int vao, vboPoints, vboColors;
-  float *vertices;
-  float *colors;
+  int vsize, esize;
+  unsigned int vao, vbo, ebo;
+  float *vbuf;
+  unsigned int *ebuf;
 public:
-  void setVertex();
-  void setColor();
   virtual void bind()=0;
-  virtual void draw()=0;
+  virtual void draw();
   virtual ~BaseObject();
 };
 

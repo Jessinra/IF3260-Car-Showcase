@@ -2,26 +2,27 @@
 
 void Triangle::bind() {
   glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vboPoints);
-  glGenBuffers(1, &vboColors);
+  glGenBuffers(1, &vbo);
+  glGenBuffers(1, &ebo);
   glBindVertexArray(vao);
   // Bind vertices
-  glBindBuffer(GL_ARRAY_BUFFER, vboPoints);
-  glBufferData(GL_ARRAY_BUFFER, 3 * vsize * sizeof(float), vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, 6 * vsize * sizeof(float), vbuf,
+               GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
   // Bind colors
-  glBindBuffer(GL_ARRAY_BUFFER, vboColors);
-  glBufferData(GL_ARRAY_BUFFER, 3 * csize * sizeof(float), colors, GL_STATIC_DRAW);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                        (void*)(3 * sizeof(float)));
   // Enable vertex attrib
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
-  // Bind buffer
+  // Bind indices
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, esize * sizeof(unsigned), ebuf,
+               GL_STATIC_DRAW);
+  /* Is this even needed?
+  // Unind buffer
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
-}
-
-void Triangle::draw() {
-  glBindVertexArray(vao);
-  glDrawArrays(GL_TRIANGLES, 0, vsize);
+  */
 }
