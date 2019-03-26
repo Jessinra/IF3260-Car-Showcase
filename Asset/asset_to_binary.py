@@ -92,12 +92,17 @@ def cook_mesh(raw_mesh):
     def map_coord(v):
         v = (v / (max_dim / 2.0)) - 1.0
         return v
+    def invert_y(coords):
+        if len(coords) > 1:
+            y = raw_mesh.height - coords[1]
+            coords = coords[:1] + (y,) + coords[2:]
+        return coords
     coord_elems = max(len(vertex.coords) for vertex in raw_mesh.vertices)
     col_elems = max(len(vertex.colour) for vertex in raw_mesh.vertices)
     vertices = []
     for vertex in raw_mesh.vertices:
         vertices.append(
-            pad_list(map(map_coord, vertex.coords), coord_elems) +
+            pad_list(map(map_coord, invert_y(vertex.coords)), coord_elems) +
             pad_list(map(lambda v: float(v)/255, vertex.colour), col_elems))
     mode = raw_mesh.mode
     indices = raw_mesh.indices
