@@ -1,9 +1,6 @@
 #include "Triangle.hpp"
 
 void Triangle::bind() {
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-  glGenBuffers(1, &ebo);
   glBindVertexArray(vao);
   // Bind vertices
   glBindBuffer(GL_ARRAY_BUFFER, vbo);

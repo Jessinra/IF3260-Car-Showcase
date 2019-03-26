@@ -10,6 +10,7 @@ protected:
   unsigned int vao, vbo, ebo;
   float *vbuf;
   unsigned int *ebuf;
+  BaseObject();
 public:
   virtual void bind()=0;
   virtual void draw();

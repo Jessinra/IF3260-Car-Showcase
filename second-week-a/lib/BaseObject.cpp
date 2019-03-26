@@ -1,5 +1,11 @@
 #include "BaseObject.hpp"
 
+BaseObject::BaseObject() {
+  glGenVertexArrays(1, &vao);
+  glGenBuffers(1, &vbo);
+  glGenBuffers(1, &ebo);
+}
+
 BaseObject::~BaseObject() {
   glDeleteVertexArrays(1, &vao);
   glDeleteBuffers(1, &vbo);
