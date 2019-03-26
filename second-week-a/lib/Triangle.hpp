@@ -6,7 +6,6 @@
 class Triangle : public BaseObject {
 public:
   void bind();
-  void draw();
 };
 
 #endif

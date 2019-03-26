@@ -1,7 +1,7 @@
 #include "lib/Window.hpp"
 #include <string>
 #include "lib/loader.hpp"
-#include "lib/Triangle.hpp"
+#include "lib/TestTriangle.hpp"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 600
@@ -29,7 +29,7 @@ int main() {
     w.attachToProgram();
     w.deleteShader();
     // Testing
-    Triangle* t = new Triangle();
+    Triangle* t = new TestTriangle();
     w.addObject(t);
     w.bindBuffer();
     w.run();
