@@ -1,5 +1,4 @@
 #include "Window.hpp"
-#include "loader.hpp"
 #include <string>
 #include <stdio.h>
 

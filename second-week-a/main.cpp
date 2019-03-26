@@ -1,6 +1,6 @@
 #include "lib/Window.hpp"
 #include <string>
-#include "lib/loader.hpp"
+#include "lib/Loader.hpp"
 #include "lib/TestTriangle.hpp"
 
 #define SCR_WIDTH 800
