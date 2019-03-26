@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include "loader.hpp"
+#include "Loader.hpp"
 
 void readFile(const char* file, char** buffer) {
   *buffer = nullptr;
