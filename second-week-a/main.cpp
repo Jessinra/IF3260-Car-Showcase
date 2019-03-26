@@ -1,7 +1,7 @@
 #include "lib/Window.hpp"
 #include <string>
 #include "lib/Loader.hpp"
-#include "lib/TestTriangle.hpp"
+#include "lib/MeshLoader.hpp"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 600
@@ -28,9 +28,8 @@ int main() {
     w.createFragmentShader(&fragmentSourceProgram);
     w.attachToProgram();
     w.deleteShader();
-    // Testing
-    Triangle* t = new TestTriangle();
-    w.addObject(t);
+    Mesh *m = MeshLoader::loadFile("assets/dragon.mesh");
+    w.addObject(m);
     w.bindBuffer();
     w.run();
   } catch (const std::string &error) {
