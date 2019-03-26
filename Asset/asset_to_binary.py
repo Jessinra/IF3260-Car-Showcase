@@ -1,4 +1,4 @@
-#/usr/bin/env python3
+#!/usr/bin/env python3
 import struct
 from collections import namedtuple
 from functools import reduce
