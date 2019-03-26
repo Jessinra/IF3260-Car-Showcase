@@ -1,6 +1,7 @@
 #include "lib/Window.hpp"
 #include <string>
 #include "lib/loader.hpp"
+#include "lib/Triangle.hpp"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 600
@@ -8,18 +9,6 @@
 int main() {
   char* vertexSourceProgram;
   char* fragmentSourceProgram;
-
-  // Testing
-  float vertices[] = {
-    0.0f, 0.6f, 0.0f,     
-    0.65f, 0.10f, 0.0f,   
-    0.46f, -0.74f, 0.0f
-  };
-  float colors[] = {
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f
-  };
 
   try {
     readFile("assets/vectorSource.glsl", &vertexSourceProgram);
@@ -40,7 +29,11 @@ int main() {
     w.attachToProgram();
     w.deleteShader();
     // Testing
-    w.bindBuffer(vertices, colors, 9, 9);
+    Triangle* t = new Triangle();
+    t->setColor();
+    t->setVertex();
+    w.addObject(t);
+    w.bindBuffer();
     w.run();
   } catch (std::string error) {
     glfwTerminate();

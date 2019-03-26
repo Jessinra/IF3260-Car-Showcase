@@ -1,6 +1,7 @@
 #include "Window.hpp"
 #include "loader.hpp"
 #include <string>
+#include <stdio.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -77,26 +78,14 @@ void Window::deleteShader() {
   glDeleteShader(fragmentShader);
 }
 
-void Window::bindBuffer(float* vertices, float* colors, int vsize, int csize) {
-  this->size = vsize;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBOPoints);
-  glGenBuffers(1, &VBOColors);
-  glBindVertexArray(VAO);
-  // Bind vertices
-  glBindBuffer(GL_ARRAY_BUFFER, VBOPoints);
-  glBufferData(GL_ARRAY_BUFFER, 3 * vsize * sizeof(float), vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-  // Bind colors
-  glBindBuffer(GL_ARRAY_BUFFER, VBOColors);
-  glBufferData(GL_ARRAY_BUFFER, 3 * csize * sizeof(float), colors, GL_STATIC_DRAW);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-  // Enable vertex attrib
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  // Bind buffer
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+void Window::bindBuffer() {
+  for (auto object: objects) {
+    object->bind();
+  }
+}
+
+void Window::addObject(BaseObject *obj) {
+  objects.push_back(obj);
 }
 
 void Window::run() {
@@ -104,13 +93,15 @@ void Window::run() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, this->size);
+    for (auto object: objects) {
+      object->draw();
+    }
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBOPoints);
-  glDeleteBuffers(1, &VBOColors);
+
+  for (auto object: objects) {
+    delete object;
+  }
   glfwTerminate();
 }

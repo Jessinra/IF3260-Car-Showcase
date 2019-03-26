@@ -1,8 +1,8 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
-#include "../include/glad/glad.h"
-#include <GLFW/glfw3.h>
+#include "BaseObject.hpp"
+#include <vector>
 
 class Window {
 
@@ -12,13 +12,15 @@ private:
 
   int vertexShader, fragmentShader;
   int shaderProgram;  
-  unsigned int VAO, VBOPoints, VBOColors;
   
-  int success, size;
+  int success;
   const char* title;
+
   char info[512];
   GLFWwindow* window = nullptr;
   
+  std::vector<BaseObject*> objects;
+
 public:
   Window(int width, int height, const char* title);
   void initializeGLFW();
@@ -28,8 +30,9 @@ public:
   void createFragmentShader(char** fragmentShaderSource);
   void attachToProgram();
   void deleteShader();
-  void bindBuffer(float* vertices, float* colors, int vertexCount, int colorCount);
+  void bindBuffer();
   void run();
+  void addObject(BaseObject *obj);
 };
 
 #endif
