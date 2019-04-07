@@ -37,6 +37,7 @@ public:
   void bindBuffer();
   void run();
   void addObject(BaseObject *obj);
+  void bindKeyCallback();
 };
 
 #endif

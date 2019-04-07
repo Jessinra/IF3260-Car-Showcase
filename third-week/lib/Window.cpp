@@ -5,6 +5,7 @@
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int modes);
 
 Window::Window(int width, int height, const char* title) : title(title) {
   this->height = height;
@@ -103,4 +104,30 @@ void Window::run() {
     delete object;
   }
   glfwTerminate();
+}
+
+void Window::bindKeyCallback() {
+  glfwSetKeyCallback(window, (GLFWkeyfun) (keyCallback));
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int modes) {
+  if (action == GLFW_PRESS) {
+    switch (key)
+    {
+      case GLFW_KEY_W:
+        printf("Up\n");
+        break;
+      case GLFW_KEY_S: 
+        printf("Down\n");
+        break;
+      case GLFW_KEY_A:
+        printf("Left\n");
+        break;
+      case GLFW_KEY_D:
+        printf("Right\n");
+        break;
+      default:
+        break;
+    }
+  }
 }

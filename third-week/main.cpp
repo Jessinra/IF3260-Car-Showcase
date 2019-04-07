@@ -31,6 +31,7 @@ int main() {
     Mesh *m = MeshLoader::loadFile("assets/jeep.mesh");
     w.addObject(m);
     w.bindBuffer();
+    w.bindKeyCallback();
     w.run();
   } catch (const std::string &error) {
     glfwTerminate();
