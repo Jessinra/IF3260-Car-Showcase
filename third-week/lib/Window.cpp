@@ -80,6 +80,7 @@ void Window::deleteShader() {
 
 void Window::bindBuffer() {
   for (auto object: objects) {
+    object->windowTransform(RotationView);
     object->bind();
   }
 }

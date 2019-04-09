@@ -18,3 +18,9 @@ void BaseObject::draw() {
   glBindVertexArray(vao);
   glDrawElements(GL_TRIANGLES, esize, GL_UNSIGNED_INT, nullptr);
 }
+
+void BaseObject::windowTransform(glm::quat& rotationView) {
+  glm::mat4 vmat = glm::make_mat4(vbuf);
+  glm::mat4 rotation = glm::toMat4(rotationView);
+  tvbuf = rotation * vmat;
+}

@@ -21,7 +21,7 @@ private:
   char info[512];
   GLFWwindow* window = nullptr;
 
-  glm::quat Quaternion = glm::quat(glm::vec3(0, 0, 0));
+  glm::quat RotationView = glm::quat(glm::vec3(0, 0, 0));
   
   std::vector<BaseObject*> objects;
 
