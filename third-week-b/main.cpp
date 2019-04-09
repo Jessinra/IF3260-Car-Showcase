@@ -16,7 +16,7 @@
 using namespace std;
 
 glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-glm::mat4 view = glm::mat4(1.0);
+glm::mat4 view;
 glm::mat4 model = glm::mat4(1.0);
 Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 
@@ -90,7 +90,7 @@ int main(int argc, char ** argv){
         }
         stbi_image_free(data);
 
-        glUniform1i(glGetUniformLocation(shader.ID, "tex_sampler"), 0);
+        glUniform1i(glGetUniformLocation(shader.StackedShader, "tex_sampler"), 0);
 
         // Render loop
         while (!glfwWindowShouldClose(window)) {
@@ -98,8 +98,7 @@ int main(int argc, char ** argv){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             processInput(window);
 
-            view = glm::mat4(1.0f);
-            view = camera.GetViewMatrix();
+            glm::mat4 view = camera.GetViewMatrix();
             shader.setMat4("view", view);
 
             glActiveTexture(GL_TEXTURE0);
@@ -116,11 +115,15 @@ int main(int argc, char ** argv){
         glDeleteBuffers(1, &points_VBO);
         glDeleteBuffers(1, &tex_VBO);
         glfwTerminate();
+
     } catch (int val) {
+        
         glfwTerminate();
+
         if (val == 1){
             cout << "Failed to create GLFW window" << endl;
             return -1;
+
         } else if (val == 2) {
             cout << "Failed to initialize GLAD" << endl;
             return -1;
@@ -143,7 +146,7 @@ void setupWindow(GLFWwindow **window){
     }
 
     glfwSetFramebufferSizeCallback(*window, framebuffer_size_callback);
-    // glfwSetCursorPosCallback(*window, mouseCallback);
+    glfwSetCursorPosCallback(*window, mouseCallback);
     glfwMakeContextCurrent(*window);
 }
 
@@ -154,13 +157,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height){
 void processInput(GLFWwindow *window){
     float cameraSpeed = 0.003f; 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(Camera_Movement::FORWARD, cameraSpeed);
+        camera.moveOnKeyPress(Camera_Movement::FORWARD, cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(Camera_Movement::BACKWARD, cameraSpeed);
+        camera.moveOnKeyPress(Camera_Movement::BACKWARD, cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(Camera_Movement::LEFT, cameraSpeed);
+        camera.moveOnKeyPress(Camera_Movement::LEFT, cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(Camera_Movement::RIGHT, cameraSpeed);
+        camera.moveOnKeyPress(Camera_Movement::RIGHT, cameraSpeed);
 }
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
@@ -173,5 +176,5 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
     float yoffset = lastY - ypos;
     lastX = xpos;
     lastY = ypos;
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    camera.moveOnMouseMovement(xoffset, yoffset);
 }

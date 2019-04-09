@@ -9,7 +9,7 @@ using namespace std;
 
 class Shader {
 public:
-    unsigned int ID;
+    unsigned int StackedShader;
 
     Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 
@@ -31,6 +31,18 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
 private:
+
+    unsigned int initializeVertexShader(const char* vertexPath);
+    unsigned int initializeFragmentShader(const char* fragmentPath);
+    unsigned int initializeGeometryShader(const char* geometryPath);
+
+    std::string loadShader(const char* shaderPath);
+    unsigned int compileToVertexShader(std::string shaderCode);
+    unsigned int compileToFragmentShader(std::string shaderCode);
+    unsigned int compileToGeometryShader(std::string shaderCode);
+
+    void attachThenDeleteShadder(unsigned int shadder);
+
     // utility function for checking shader compilation/linking errors.
     // ------------------------------------------------------------------------
     void checkCompileErrors(GLuint shader, std::string type);
