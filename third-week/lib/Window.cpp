@@ -1,11 +1,12 @@
 #include "Window.hpp"
 #include <string>
 #include <stdio.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int modes);
 
 Window::Window(int width, int height, const char* title) : title(title) {
   this->height = height;
@@ -32,71 +33,65 @@ void Window::initializeGLAD() {
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     throw "Failed to initialize GLAD";
   }
-}
-
-void Window::createVertexShader(char** vertexShaderSource) {
-  vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-  glCompileShader(vertexShader);
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(vertexShader, 512, NULL, info);
-    std::string infoString(info);
-    throw "Vertex Shader Failed: \n" + infoString;
-  }
-}
-
-void Window::createFragmentShader(char** fragmentShaderSource) {
-  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(fragmentShader, 512, NULL, info);
-    std::string infoString(info);
-    throw "Fragment Shader Failed: \n" + infoString;
-  }
-}
-
-void Window::attachToProgram() {
-  shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glBindAttribLocation(shaderProgram, 0, "vertex_position");
-  glBindAttribLocation(shaderProgram, 1, "vertex_colour");
-  glLinkProgram(shaderProgram);
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if (!success) {
-    glGetProgramInfoLog(shaderProgram, 512, NULL, info);
-    std::string infoString(info);
-    throw "Program Linking Failed: \n" + infoString;
-  }
-}
-
-void Window::deleteShader() {
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
+  glEnable(GL_DEPTH_TEST);
 }
 
 void Window::bindBuffer() {
   for (auto object: objects) {
-    object->windowTransform(RotationView);
     object->bind();
   }
 }
 
-void Window::addObject(BaseObject *obj) {
+void Window::bindTexture(Shader& shader) {
+  glGenTextures(1, &texture);
+  // glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, texture); 
+    // set the texture wrapping parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  // set texture filtering parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // load image, create texture and generate mipmaps
+  int width, height, nrChannels;
+  stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+  // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+  unsigned char *data = stbi_load("assets/wall.jpg", &width, &height, &nrChannels, 0);
+  if (data) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  } else {
+    throw "Failed to load texture";
+  }
+  stbi_image_free(data);
+  shader.use();
+  glUniform1i(glGetUniformLocation(shader.ID, "texture_sampler"), 0);
+}
+
+void Window::addObject(Mesh *obj) {
   objects.push_back(obj);
 }
 
-void Window::run() {
+void Window::run(Shader& shader, Camera& camera, glm::mat4& view) {
+
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shaderProgram);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    processInput(camera);
+
+    view = glm::mat4(1.0f);
+    view = camera.GetViewMatrix();
+    shader.setMat4("view", view);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    //shader.use();
+    
     for (auto object: objects) {
       object->draw();
     }
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -107,28 +102,15 @@ void Window::run() {
   glfwTerminate();
 }
 
-void Window::bindKeyCallback() {
-  glfwSetKeyCallback(window, (GLFWkeyfun) (keyCallback));
-}
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int modes) {
-  if (action == GLFW_PRESS) {
-    switch (key)
-    {
-      case GLFW_KEY_W:
-        printf("Up\n");
-        break;
-      case GLFW_KEY_S: 
-        printf("Down\n");
-        break;
-      case GLFW_KEY_A:
-        printf("Left\n");
-        break;
-      case GLFW_KEY_D:
-        printf("Right\n");
-        break;
-      default:
-        break;
-    }
+void Window::processInput(Camera& camera) {
+  float cameraSpeed = 0.03f; // adjust accordingly 
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    camera.ProcessKeyboard(Camera_Movement::FORWARD, cameraSpeed); 
   }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
+    camera.ProcessKeyboard(Camera_Movement::BACKWARD, cameraSpeed); 
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) 
+    camera.ProcessKeyboard(Camera_Movement::LEFT, cameraSpeed); 
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    camera.ProcessKeyboard(Camera_Movement::RIGHT, cameraSpeed); 
 }

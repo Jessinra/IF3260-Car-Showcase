@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-all: main assets/jeep.mesh
+all: main
 
 clean:
 	rm -f main *.o assets/*.mesh
