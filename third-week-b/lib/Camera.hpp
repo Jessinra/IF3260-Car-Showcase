@@ -19,6 +19,7 @@ const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
+const float KEYBOARD_SENSITIVITY = 0.05f;
 const float ZOOM = 45.0f;
 
 class Camera {
@@ -29,12 +30,15 @@ class Camera {
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
+    glm::vec3 Target;
 
     // Euler Angles
     float Yaw;
     float Pitch;
 
-
+    float distance = 10.0f;
+    float prevRotX = 0.0f;
+    float prevRotZ = 0.0f;
 
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
            float yaw = YAW, float pitch = PITCH);

@@ -3,11 +3,14 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <cmath>
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Front(glm::vec3(0.0f, 1.0f, 0.0f)),
                                                                            MovementSpeed(SPEED),
                                                                            MouseSensitivity(SENSITIVITY),
-                                                                           Zoom(ZOOM) {
+                                                                           Zoom(ZOOM),
+                                                                           Up(glm::vec3(0.0f, 0.0f, 0.0f)),
+                                                                           Target(glm::vec3(0, 0, 0)) {
     Position = position;
     WorldUp = up;
     Yaw = yaw;
@@ -29,20 +32,27 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
 }
 
 glm::mat4 Camera::GetViewMatrix() {
-    return glm::lookAt(Position, Position + Front, Up);
+    return glm::lookAt(Position, Target, Up);
 }
 
 void Camera::moveOnKeyPress(Camera_Movement direction, float deltaTime) {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD) {
         Position += Front * velocity;
+        distance -= velocity;
     } else if (direction == BACKWARD) {
         Position -= Front * velocity;
+        distance += velocity;
     } else if (direction == LEFT) {
-        Position -= Right * velocity;
+        prevRotX += deltaTime * KEYBOARD_SENSITIVITY;
+        prevRotZ += deltaTime * KEYBOARD_SENSITIVITY;
+        // Position -= Right * velocity;
     } else if (direction == RIGHT) {
-        Position += Right * velocity;
+        prevRotX -= deltaTime * KEYBOARD_SENSITIVITY;
+        prevRotZ -= deltaTime * KEYBOARD_SENSITIVITY;
+        // Position += Right * velocity;
     }
+    Position = glm::vec3(sin(prevRotX) * distance, 0.0f, cos(prevRotZ) * distance);
 }
 
 void Camera::moveOnKeyPress(Camera_Movement direction, glm::vec3 target, float deltaTime) {
@@ -123,7 +133,7 @@ void Camera::moveOnMouseScroll(float yoffset) {
     }
 }
 
-bool Camera::isZoomAllowed(){
+bool Camera::isZoomAllowed() {
     return this->Zoom >= this->ZoomMin && this->Zoom <= this->ZoomMax;
 }
 

@@ -146,7 +146,7 @@ void setupWindow(GLFWwindow **window){
     }
 
     glfwSetFramebufferSizeCallback(*window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(*window, mouseCallback);
+    // glfwSetCursorPosCallback(*window, mouseCallback);
     glfwMakeContextCurrent(*window);
 }
 
