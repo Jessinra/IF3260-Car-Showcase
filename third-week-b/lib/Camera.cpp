@@ -38,21 +38,22 @@ glm::mat4 Camera::GetViewMatrix() {
 void Camera::moveOnKeyPress(Camera_Movement direction, float deltaTime) {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD) {
-        Position += Front * velocity;
+        if (distance < 1.0f) return;
         distance -= velocity;
     } else if (direction == BACKWARD) {
-        Position -= Front * velocity;
         distance += velocity;
     } else if (direction == LEFT) {
         prevRotX += deltaTime * KEYBOARD_SENSITIVITY;
         prevRotZ += deltaTime * KEYBOARD_SENSITIVITY;
-        // Position -= Right * velocity;
     } else if (direction == RIGHT) {
         prevRotX -= deltaTime * KEYBOARD_SENSITIVITY;
         prevRotZ -= deltaTime * KEYBOARD_SENSITIVITY;
-        // Position += Right * velocity;
+    } else if (direction == UP) {
+        prevRotY += deltaTime * KEYBOARD_SENSITIVITY;
+    } else if (direction == DOWN) {
+        prevRotY -= deltaTime * KEYBOARD_SENSITIVITY;
     }
-    Position = glm::vec3(sin(prevRotX) * distance, 0.0f, cos(prevRotZ) * distance);
+    Position = glm::vec3(sin(prevRotX) * cos(prevRotY), sin(prevRotY), cos(prevRotY) * cos(prevRotX)) * distance;
 }
 
 void Camera::moveOnKeyPress(Camera_Movement direction, glm::vec3 target, float deltaTime) {

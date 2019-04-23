@@ -164,6 +164,10 @@ void processInput(GLFWwindow *window){
         camera.moveOnKeyPress(Camera_Movement::LEFT, cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.moveOnKeyPress(Camera_Movement::RIGHT, cameraSpeed);
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        camera.moveOnKeyPress(Camera_Movement::UP, cameraSpeed);
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        camera.moveOnKeyPress(Camera_Movement::DOWN, cameraSpeed);
 }
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {

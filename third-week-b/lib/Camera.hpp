@@ -38,7 +38,9 @@ class Camera {
 
     float distance = 10.0f;
     float prevRotX = 0.0f;
+    float prevRotY = 0.0f;
     float prevRotZ = 0.0f;
+    float prevRotXX = 0.0f;
 
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
            float yaw = YAW, float pitch = PITCH);
