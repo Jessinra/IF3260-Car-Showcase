@@ -171,9 +171,9 @@ int main(int argc, char ** argv) {
             }
 
             if (right) {
-                lightPos = glm::vec3(lightPos.x + 0.0001f, lightPos.y, lightPos.z);
+                lightPos = glm::vec3(lightPos.x + 0.001f, lightPos.y, lightPos.z);
             } else {
-                lightPos = glm::vec3(lightPos.x - 0.0001f, lightPos.y, lightPos.z);
+                lightPos = glm::vec3(lightPos.x - 0.001f, lightPos.y, lightPos.z);
             }
 
             // Set shader obj again
@@ -247,6 +247,7 @@ void setupWindow(GLFWwindow **window){
     glfwSetFramebufferSizeCallback(*window, framebuffer_size_callback);
     // glfwSetCursorPosCallback(*window, mouseCallback);
     glfwMakeContextCurrent(*window);
+    glfwSwapInterval(1);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height){
@@ -254,7 +255,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height){
 }
 
 void processInput(GLFWwindow *window){
-    float cameraSpeed = 0.003f; 
+    float cameraSpeed = 0.03f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.moveOnKeyPress(Camera_Movement::FORWARD, cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
