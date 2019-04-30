@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include "model/Model.hpp"
 #include "lib/Shader.hpp"

@@ -1,14 +1,30 @@
-all: clean build/main run
+run: build/main
+	./build/main
 
 .PHONY: run clean
 
 LIBS = -lGL -lGLU -lglfw3 -lrt -lm -ldl -lXrandr -lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes -lX11 -lpthread -lxcb -lXau -lXdmcp
 
-build/main: main.cpp lib/* modules/glad.c
-	g++ main.cpp $(CPPFLAGS) $(LIBS) model/Model.cpp modules/glad.c lib/*.cpp  -o build/main
+CFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o,%.d,$@)
 
-run: build/main
-	build/main
+build/main.o: main.cpp
+	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+build/glad.o: modules/glad.c
+	gcc $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+build/Model.o: model/Model.cpp
+	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+build/%.o: lib/%.cpp
+	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o build/Model.o
+	g++ $(LIBS) -o $@ $^
 
 clean:
 	rm -rf build/*
+
+build/%.d: ;
+
+include $(wildcard build/*.d)
