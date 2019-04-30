@@ -1,0 +1,7 @@
+build/*
+cmake-build-debug
+.idea
+asset/*.asset
+.vscode
+.project
+.cproject
