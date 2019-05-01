@@ -4,8 +4,12 @@
 const float Rain::vertices[] =
     {
         0, 0, 0,
-        -0.005, 0.5, 0,
-        0.005, 0.5, 0};
+        -5e-3, 0.5, 5e-3 / sqrt(3),
+        5e-3, 0.5, 5e-3 / sqrt(3),
+        0, 0.5, -1e-2 / sqrt(3),
+        0, 0, 0,
+        -5e-3, 0.5, 5e-3 / sqrt(3),
+    };
 
 Rain::Rain(const glm::mat4 &proj, const Camera &cam, size_t maxParticles)
     : Particles(proj,
@@ -58,7 +62,7 @@ void Rain::render(glm::vec3 lightPos) {
     glVertexAttribDivisor(0, 0);  // all use the same element
     glVertexAttribDivisor(1, 1);  // each use different element
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 3, nParticles);
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 6, nParticles);
     
     reuse();
     simulate();
