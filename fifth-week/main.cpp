@@ -87,6 +87,7 @@ int main(int argc, char ** argv) {
             startTime = doneTime;
             glfwPollEvents();
         }
+        
     } catch (int val) {
         
         glfwTerminate();
