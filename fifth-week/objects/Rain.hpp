@@ -6,6 +6,7 @@
 class Rain : public Particles {
 private:
     static const float vertices[];
+    void simulate();
 public:
     Rain(const glm::mat4 &projection, const Camera &camera,
          size_t maxParticles = 1000);

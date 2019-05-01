@@ -9,6 +9,9 @@ protected:
     glm::vec3 *positions;
     glm::vec3 *velocities;
     unsigned int posVbo;
+    size_t nParticles;
+    double lastTime;
+    virtual void simulate() = 0;
 public:
     Particles(const glm::mat4 &projection, const Camera &camera, Shader,
               size_t maxParticles = 1000);
