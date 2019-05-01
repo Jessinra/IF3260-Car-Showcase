@@ -9,6 +9,7 @@
 #include "objects/Car.hpp"
 #include "objects/Lamp.hpp"
 #include "objects/Rain.hpp"
+#include "objects/Smoke.hpp"
 
 #define SCR_WIDTH 900
 #define SCR_HEIGHT 600
@@ -46,6 +47,7 @@ int main(int argc, char ** argv) {
         // Particles
         const size_t maxParticles = 1000;
         Rain rain(projection, camera, maxParticles);
+        Smoke smoke(projection, camera, maxParticles);
 
         glEnable(GL_DEPTH_TEST);
 
@@ -77,6 +79,9 @@ int main(int argc, char ** argv) {
 
             // Draw rain
             rain.render(lightPos);
+
+            // Draw smoke
+            smoke.render(lightPos);
 
             glfwSwapBuffers(window);
             double doneTime = glfwGetTime();

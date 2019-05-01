@@ -70,7 +70,7 @@ void Lamp::render(glm::vec3 lightPos) {
     shader.setMat4("view", camera.View);
     glm::mat4 lampModel = glm::mat4(1.0f);
     lampModel = glm::translate(lampModel, lightPos);
-    lampModel = glm::scale(lampModel, glm::vec3(0.3f)); // a smaller cube
+    lampModel = glm::scale(lampModel, glm::vec3(0.5f)); // a smaller cube
     shader.setMat4("model", lampModel);
 
     // Draw
