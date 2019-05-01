@@ -188,6 +188,8 @@ int main(int argc, char ** argv) {
 
         bool right = true;
         // Render loop
+        double startTime = glfwGetTime();
+        double printTime = startTime;
         while (!glfwWindowShouldClose(window)) {
             glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -250,6 +252,12 @@ int main(int argc, char ** argv) {
             //glDrawArrays(GL_TRIANGLES, 0, 3);
 
             glfwSwapBuffers(window);
+            double doneTime = glfwGetTime();
+            if ((doneTime - printTime) > 1) {
+                printTime = doneTime;
+                cout << (1 / (doneTime - startTime)) << endl;
+            }
+            startTime = doneTime;
             glfwPollEvents();
         }
 
