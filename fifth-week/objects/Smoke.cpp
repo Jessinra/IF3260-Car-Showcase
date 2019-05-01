@@ -16,6 +16,7 @@ Smoke::Smoke(const glm::mat4 &proj, const Camera &cam, size_t maxParticles)
                 cam,
                 Shader("assets/vertexSmoke.glsl", "assets/fragmentSmoke.glsl"),
                 maxParticles) {
+    // Setup VAO
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -62,6 +63,7 @@ Smoke::Smoke(const glm::mat4 &proj, const Camera &cam, size_t maxParticles)
     stbi_image_free(data);
     shader.setInt("tex_sampler", 0);
 
+    // Generate particles
     this->generate(maxParticles);
 }
 
@@ -118,4 +120,5 @@ void Smoke::reuse() {
 }
 
 Smoke::~Smoke() {
+    glDeleteTextures(1, &texture);
 }

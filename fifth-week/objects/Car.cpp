@@ -61,6 +61,7 @@ Car::Car(const glm::mat4 &proj, const Camera &cam)
 }
 
 Car::~Car() {
+    glDeleteTextures(1, &texture);
     glDeleteBuffers(1, &normVbo);
     glDeleteBuffers(1, &texVbo);
 }
