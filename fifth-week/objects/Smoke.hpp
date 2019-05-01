@@ -10,6 +10,7 @@
 class Smoke : public Particles {
    private:
     static const float vertices[];
+    float *ages;
     unsigned int texVbo, texture;
     SmokeGenerator smokeGenerator;
 
@@ -18,8 +19,7 @@ class Smoke : public Particles {
     void reuse();
 
     const glm::vec3 GRAVITY = glm::vec3(0, 0.028, 0);
-    const float DISPERSEHEIGHT = 3;
-    const float BACKWALL = -7;
+    const float MAX_LIFETIME = 7.0;
 
    public:
     Smoke(const glm::mat4 &projection, const Camera &camera,

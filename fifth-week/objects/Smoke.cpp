@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 #include <iostream>
+#include <glm/gtc/random.hpp>
 
 const float Smoke::vertices[] =
     {
@@ -16,6 +17,9 @@ Smoke::Smoke(const glm::mat4 &proj, const Camera &cam, size_t maxParticles)
                 cam,
                 Shader("assets/vertexSmoke.glsl", "assets/fragmentSmoke.glsl"),
                 maxParticles) {
+    // Allocate arrays
+    ages = new float[maxParticles];
+
     // Setup VAO
     glBindVertexArray(vao);
 
@@ -73,6 +77,7 @@ void Smoke::generate(int nParticles) {
     for (int i = 0; i < nParticles; i++) {
         this->positions[i] = this->smokeGenerator.getRandomPosition();
         this->velocities[i] = this->smokeGenerator.getRandomVelocity();
+        this->ages[i] = 0;
     }
 }
 
@@ -104,6 +109,7 @@ void Smoke::simulate() {
     for (size_t i = 0; i < nParticles; i++) {
         positions[i] += velocities[i] * dt + 0.5f * GRAVITY * dt * dt;
         velocities[i] += GRAVITY * dt;
+        ages[i] += glm::max(0.0f, glm::gaussRand(dt, 7 * dt));
     }
     lastTime = now;
 }
@@ -112,13 +118,15 @@ void Smoke::reuse() {
 
     for (int i = 0; i < nParticles; i++) {
         
-        if (this->positions[i].y > DISPERSEHEIGHT || this->positions[i].x < BACKWALL) {
+        if (this->ages[i] > MAX_LIFETIME) {
             this->positions[i] = this->smokeGenerator.getRandomPosition();
             this->velocities[i] = this->smokeGenerator.getRandomVelocity();
+            this->ages[i] = 0;
         }
     }
 }
 
 Smoke::~Smoke() {
     glDeleteTextures(1, &texture);
+    delete[] ages;
 }
