@@ -10,6 +10,7 @@
 class Smoke : public Particles {
    private:
     static const float vertices[];
+    unsigned int texVbo, texture;
     SmokeGenerator smokeGenerator;
 
     void simulate();

@@ -50,6 +50,9 @@ int main(int argc, char ** argv) {
         Smoke smoke(projection, camera, maxParticles);
 
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
         bool right = true;
         // Render loop
