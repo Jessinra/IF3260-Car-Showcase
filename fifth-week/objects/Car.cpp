@@ -57,7 +57,7 @@ Car::Car(const glm::mat4 &proj, const Camera &cam)
     }
     stbi_image_free(data);
 
-    glUniform1i(glGetUniformLocation(shader.StackedShader, "tex_sampler"), 0);
+    shader.setInt("texSampler", 0);
 }
 
 Car::~Car() {
