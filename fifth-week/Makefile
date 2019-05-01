@@ -20,7 +20,7 @@ build/%.o: lib/%.cpp
 	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o build/Model.o
-	g++ $(LIBS) -o $@ $^
+	g++ -o $@ $^ $(LIBS)
 
 clean:
 	rm -rf build/*
