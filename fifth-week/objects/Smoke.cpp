@@ -50,6 +50,16 @@ Smoke::Smoke(const glm::mat4 &proj, const Camera &cam, size_t maxParticles)
         exit(1);
     }
     stbi_image_free(data);
+    // Load 1x1 texture to fix colour at a distance
+    data = stbi_load("assets/smoke-1x1.png", &width, &height, &nrChannels, 0);
+    if (data) {
+        // 7: level of detail (210 >> 7 = 1)
+        glTexImage2D(GL_TEXTURE_2D, 7, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+        exit(1);
+    }
+    stbi_image_free(data);
     shader.setInt("tex_sampler", 0);
 
     this->generate(maxParticles);
