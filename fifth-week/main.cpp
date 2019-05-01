@@ -4,18 +4,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <stb_image.h>
-#include "model/Model.hpp"
 #include "lib/Shader.hpp"
 #include "lib/Camera.hpp"
+#include "objects/Car.hpp"
+#include "objects/Lamp.hpp"
+#include "objects/Rain.hpp"
 
 #define SCR_WIDTH 900
 #define SCR_HEIGHT 600
+#define TARGET_FPS 60
 
 using namespace std;
 
-glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-glm::mat4 view;
+const glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 
 glm::vec3 lightPos(0.0f, 4.0f, 0.0f);
@@ -37,154 +38,16 @@ int main(int argc, char ** argv) {
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
             throw 2;
         }
-        // Normal Shader
-        Shader shader("assets/vertexSource.glsl", "assets/fragmentSource.glsl");
-        // Lamp Shader
-        Shader lampShader("assets/vertexLampSource.glsl", "assets/fragmentLampSource.glsl");
 
-        // Model
-        Model obj("assets/jimny.obj");
-        // Lamp
-        float lampVertices[] = {
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-            0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-            0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-            0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-            0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-        };
-
-        unsigned int car_VAO, lamp_VAO;
-        unsigned int points_VBO, tex_VBO, norm_VBO, lamp_VBO;
+        // Objects
+        Car car(projection, camera);
+        Lamp lamp(projection, camera);
 
         // Particles
-
-        const float rainVertices[] =
-            {
-             0, 0, 0,
-             -0.25, 0.5, 0,
-             0.25, 0.5, 0
-            };
         const size_t maxParticles = 1000;
-        static glm::vec3 rainParticles[maxParticles];
-        unsigned int rain_VAO;
-        unsigned int rain_model_VBO, rain_pos_VBO;
-        Shader rainShader("assets/vertexRain.glsl", "assets/fragmentRain.glsl");
+        Rain rain(projection, camera, maxParticles);
 
-        glGenVertexArrays(1, &rain_VAO);
-        glGenBuffers(1, &rain_model_VBO);
-        glGenBuffers(1, &rain_pos_VBO);
-        glBindVertexArray(rain_VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, rain_model_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(rainVertices), rainVertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, rain_pos_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * maxParticles, NULL, GL_STREAM_DRAW);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-
-        // End particles
-
-        glGenVertexArrays(1, &car_VAO);
-        glGenVertexArrays(1, &lamp_VAO);
-        glGenBuffers(1, &points_VBO);
-        glGenBuffers(1, &tex_VBO);
-        glGenBuffers(1, &norm_VBO);
-        glGenBuffers(1, &lamp_VBO);
-
-        glBindVertexArray(car_VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, points_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * obj.getConstRefPoints().size(), obj.getConstRefPoints().data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, tex_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * obj.getConstRefTextures().size(), obj.getConstRefTextures().data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, norm_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * obj.getConstRefNormals().size(), obj.getConstRefNormals().data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-
-        glBindVertexArray(lamp_VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, lamp_VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(lampVertices), lampVertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glBindVertexArray(0);
         glEnable(GL_DEPTH_TEST);
-
-        int width, height, nrChannels;
-        stbi_set_flip_vertically_on_load(true); // Tell stb_image.h to flip loaded texture's on the y-axis.
-        unsigned int texture;
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        // set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // set texture filtering parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // load image, create texture and generate mipmaps
-        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-        unsigned char *data = stbi_load("assets/wall.jpg", &width, &height, &nrChannels, 0);
-        if (data) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        } else {
-            std::cout << "Failed to load texture" << std::endl;
-            exit(1);
-        }
-        stbi_image_free(data);
-
-        glUniform1i(glGetUniformLocation(shader.StackedShader, "tex_sampler"), 0);
 
         bool right = true;
         // Render loop
@@ -195,9 +58,6 @@ int main(int argc, char ** argv) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             processInput(window);
 
-            glm::mat4 view = camera.GetViewMatrix();
-            glm::mat4 model = glm::mat4(1.0);
-            
             if (lightPos.x > 1.0f) {
                 right = false;
             } else if (lightPos.x < -1.0f) {
@@ -210,46 +70,13 @@ int main(int argc, char ** argv) {
                 lightPos = glm::vec3(lightPos.x - 0.001f, lightPos.y, lightPos.z);
             }
 
-            // Set shader obj again
-            shader.use();
-            shader.setVec3("light_color", 1.0f, 1.0f, 1.0f);
-            shader.setVec3("light_pos", lightPos);
-            shader.setVec3("view_pos", camera.Position);
-            shader.setMat4("projection", projection);
-            shader.setMat4("model", model);
-            shader.setMat4("view", view);
+            car.render(lightPos);
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
-
-            glBindVertexArray(car_VAO);
-            glDrawArrays(GL_TRIANGLES, 0, obj.getConstRefPoints().size());
-
-            // Set shader lamp again
-            lampShader.use();
-            lampShader.setMat4("projection", projection);
-            lampShader.setMat4("view", view);
-            glm::mat4 lampModel = glm::mat4(1.0f);
-            lampModel = glm::translate(lampModel, lightPos);
-            lampModel = glm::scale(lampModel, glm::vec3(0.3f)); // a smaller cube
-            lampShader.setMat4("model", lampModel);
-
-            glBindVertexArray(lamp_VAO);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            // Draw lamp
+            lamp.render(lightPos);
 
             // Draw rain
-            rainShader.use();
-            rainShader.setMat4("projection", projection);
-            rainShader.setMat4("view", view);
-            glBindVertexArray(rain_VAO);
-            glBindBuffer(GL_ARRAY_BUFFER, rain_pos_VBO);
-            glBufferData(GL_ARRAY_BUFFER, maxParticles * sizeof(glm::vec3), NULL, GL_STREAM_DRAW); // orphan buffer
-            rainParticles[0] = glm::vec3(0, 5.0, 0);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, 1 * sizeof(glm::vec3), rainParticles);
-            glVertexAttribDivisor(0, 0); // all use the same element
-            glVertexAttribDivisor(1, 1); // each use different element
-            glDrawArraysInstanced(GL_TRIANGLES, 0, 3, 1);
-            //glDrawArrays(GL_TRIANGLES, 0, 3);
+            rain.render(lightPos);
 
             glfwSwapBuffers(window);
             double doneTime = glfwGetTime();
@@ -260,15 +87,6 @@ int main(int argc, char ** argv) {
             startTime = doneTime;
             glfwPollEvents();
         }
-
-        glDeleteVertexArrays(1, &car_VAO);
-        glDeleteVertexArrays(1, &lamp_VAO);
-        glDeleteBuffers(1, &points_VBO);
-        glDeleteBuffers(1, &tex_VBO);
-        glDeleteBuffers(1, &norm_VBO);
-        glDeleteBuffers(1, &lamp_VBO);
-        glfwTerminate();
-
     } catch (int val) {
         
         glfwTerminate();
@@ -282,6 +100,8 @@ int main(int argc, char ** argv) {
             return -1;
         }
     }
+    // finally
+    glfwTerminate();
     return 0;
 }
 

@@ -31,6 +31,7 @@ class Camera {
     glm::vec3 Right;
     glm::vec3 WorldUp;
     glm::vec3 Target;
+    glm::mat4 View;
 
     // Euler Angles
     float Yaw;
@@ -45,9 +46,9 @@ class Camera {
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
            float yaw = YAW, float pitch = PITCH);
     Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
-    // Returns the view matrix calculated using Euler Angles and the LookAt Matrix
-    
-    glm::mat4 GetViewMatrix();
+
+    // Updates the view matrix calculated using Euler Angles and the LookAt Matrix
+    void updateViewMatrix();
     
     /* Move Camera */
     void moveOnKeyPress(Camera_Movement direction, float deltaTime);

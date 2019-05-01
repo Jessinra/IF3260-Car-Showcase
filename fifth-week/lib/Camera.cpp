@@ -31,8 +31,8 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
     updateCameraVectors();
 }
 
-glm::mat4 Camera::GetViewMatrix() {
-    return glm::lookAt(Position, Target, Up);
+void Camera::updateViewMatrix() {
+    View = glm::lookAt(Position, Target, Up);
 }
 
 void Camera::moveOnKeyPress(Camera_Movement direction, float deltaTime) {
@@ -54,6 +54,7 @@ void Camera::moveOnKeyPress(Camera_Movement direction, float deltaTime) {
         prevRotY -= deltaTime * KEYBOARD_SENSITIVITY;
     }
     Position = glm::vec3(sin(prevRotX) * cos(prevRotY), sin(prevRotY), cos(prevRotY) * cos(prevRotX)) * distance;
+    updateViewMatrix();
 }
 
 void Camera::moveOnKeyPress(Camera_Movement direction, glm::vec3 target, float deltaTime) {
@@ -149,4 +150,5 @@ void Camera::updateCameraVectors() {
     this->Front = glm::normalize(front);
     this->Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     this->Up = glm::normalize(glm::cross(Right, Front));
+    updateViewMatrix();
 }

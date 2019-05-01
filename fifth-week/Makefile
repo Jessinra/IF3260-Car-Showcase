@@ -16,10 +16,13 @@ build/glad.o: modules/glad.c
 build/Model.o: model/Model.cpp
 	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
+build/%.o: objects/%.cpp
+	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
 build/%.o: lib/%.cpp
 	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o build/Model.o
+build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o build/Model.o build/Object.o build/Car.o build/Lamp.o build/Particles.o build/Rain.o
 	g++ -o $@ $^ $(LIBS)
 
 clean:
