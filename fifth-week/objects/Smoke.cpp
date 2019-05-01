@@ -31,27 +31,9 @@ Smoke::Smoke(const glm::mat4 &proj, const Camera &cam, size_t maxParticles)
 void Smoke::generate(int nParticles) {
     this->nParticles = nParticles;
 
-    std::random_device rd;                                              // obtain a random number from hardware
-    std::mt19937 eng(rd());                                             // seed the generator
-    std::uniform_int_distribution<> randomX(-230, -200);    // define the range
-    std::uniform_int_distribution<> randomY(-150, -100);     // define the range
-    std::uniform_int_distribution<> randomZ(-200, -100);     // define the range
-
-    std::uniform_int_distribution<> randomVX(-500,-100);            // define the range
-    std::uniform_int_distribution<> randomVY(-100, 300);           // define the range
-    std::uniform_int_distribution<> randomVZ(-100, 100);           // define the range
-
     for (int i = 0; i < nParticles; i++) {
-        float X = randomX(eng)/100.0;
-        float Y = randomY(eng)/100.0;
-        float Z = randomZ(eng)/100.0;
-
-        float VX = randomVX(eng)/1000.0;
-        float VY = randomVY(eng)/1000.0;
-        float VZ = randomVZ(eng)/1000.0;
-
-        this->positions[i] = glm::vec3(X, Y, Z);
-        this->velocities[i] =  glm::vec3(VX, VY, VZ);
+        this->positions[i] = this->smokeGenerator.getRandomPosition();
+        this->velocities[i] = this->smokeGenerator.getRandomVelocity();
     }
 }
 
@@ -68,7 +50,7 @@ void Smoke::render(glm::vec3 lightPos) {
     glVertexAttribDivisor(1, 1);  // each use different element
 
     glDrawArraysInstanced(GL_TRIANGLES, 0, 3, nParticles);
-    
+
     reuse();
     simulate();
 }
@@ -86,28 +68,11 @@ void Smoke::simulate() {
 
 void Smoke::reuse() {
 
-    std::random_device rd;                                              // obtain a random number from hardware
-    std::mt19937 eng(rd());                                             // seed the generator
-    std::uniform_int_distribution<> randomX(-230, -200);    // define the range
-    std::uniform_int_distribution<> randomY(-150, -100);     // define the range
-    std::uniform_int_distribution<> randomZ(-200, -100);     // define the range
-
-    std::uniform_int_distribution<> randomVX(-500,-100);            // define the range
-    std::uniform_int_distribution<> randomVY(-100, 300);           // define the range
-    std::uniform_int_distribution<> randomVZ(-100, 100);           // define the range
-
     for (int i = 0; i < nParticles; i++) {
-        if (this->positions[i].y < GROUNDLEVEL || this->positions[i].x < BACKWALL) {
-            float X = randomX(eng)/100.0;
-            float Y = randomY(eng)/100.0;
-            float Z = randomZ(eng)/100.0;
-
-            float VX = randomVX(eng)/1000.0;
-            float VY = randomVY(eng)/1000.0;
-            float VZ = randomVZ(eng)/1000.0;
-
-            this->positions[i] = glm::vec3(X, Y, Z);
-            this->velocities[i] =  glm::vec3(VX, VY, VZ);
+        
+        if (this->positions[i].y > DISPERSEHEIGHT || this->positions[i].x < BACKWALL) {
+            this->positions[i] = this->smokeGenerator.getRandomPosition();
+            this->velocities[i] = this->smokeGenerator.getRandomVelocity();
         }
     }
 }

@@ -45,8 +45,8 @@ int main(int argc, char ** argv) {
         Lamp lamp(projection, camera);
 
         // Particles
-        const size_t maxParticles = 1000;
-        Rain rain(projection, camera, maxParticles);
+        const size_t maxParticles = 2500;
+        Rain rain(projection, camera, 500);
         Smoke smoke(projection, camera, maxParticles);
 
         glEnable(GL_DEPTH_TEST);
@@ -55,6 +55,7 @@ int main(int argc, char ** argv) {
         // Render loop
         double startTime = glfwGetTime();
         double printTime = startTime;
+        
         while (!glfwWindowShouldClose(window)) {
             glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

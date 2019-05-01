@@ -22,7 +22,9 @@ build/%.o: objects/%.cpp
 build/%.o: lib/%.cpp
 	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o build/Model.o build/Object.o build/Car.o build/Lamp.o build/Particles.o build/Rain.o build/Smoke.o
+build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o \
+	build/Model.o build/Object.o build/Car.o build/Lamp.o \
+	build/Particles.o build/Rain.o build/Smoke.o build/SmokeGenerator.o
 	g++ -o $@ $^ $(LIBS)
 
 clean:
