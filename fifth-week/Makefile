@@ -25,7 +25,7 @@ build/%.o: lib/%.cpp
 build/main: build/main.o build/glad.o build/stbi.o build/Camera.o build/Shader.o \
 	build/Model.o build/Object.o build/Car.o build/Lamp.o \
 	build/Particles.o build/Rain.o build/Smoke.o build/SmokeGenerator.o
-	g++ -o $@ $^ $(LIBS)
+	g++ -g -o $@ $^ $(LIBS)
 
 clean:
 	rm -rf build/*

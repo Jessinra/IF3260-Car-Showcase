@@ -45,9 +45,8 @@ int main(int argc, char ** argv) {
         Lamp lamp(projection, camera);
 
         // Particles
-        const size_t maxParticles = 2500;
         Rain rain(projection, camera, 500);
-        Smoke smoke(projection, camera, maxParticles);
+        Smoke smoke(projection, camera, 5e3);
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
