@@ -5,7 +5,7 @@ run: build/main
 
 LIBS = -lGL -lGLU -lglfw3 -lrt -lm -ldl -lXrandr -lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes -lX11 -lpthread -lxcb -lXau -lXdmcp
 
-CFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o,%.d,$@)
+CFLAGS = -O3 -ffast-math -Wall -Wextra -MT $@ -MMD -MP -MF $(patsubst %.o,%.d,$@)
 
 build/main.o: main.cpp
 	g++ $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
