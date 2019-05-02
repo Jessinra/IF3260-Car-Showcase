@@ -37,6 +37,7 @@ unsigned int Shader::initializeVertexShader(const char *vertexPath) {
     shader = compileToVertexShader(shaderCode);
 
     attachThenDeleteShadder(shader);
+    return 0;
 }
 
 unsigned int Shader::initializeFragmentShader(const char *fragmentPath) {
@@ -47,6 +48,7 @@ unsigned int Shader::initializeFragmentShader(const char *fragmentPath) {
     fragmentShader = compileToFragmentShader(fragmentShaderCode);
 
     attachThenDeleteShadder(fragmentShader);
+    return 0;
 }
 
 unsigned int Shader::initializeGeometryShader(const char *geometryPath) {
@@ -57,6 +59,7 @@ unsigned int Shader::initializeGeometryShader(const char *geometryPath) {
     geometryShader = compileToGeometryShader(geometryShaderCode);
 
     attachThenDeleteShadder(geometryShader);
+    return 0;
 }
 
 std::string Shader::loadShader(const char *shaderPath) {
@@ -66,7 +69,6 @@ std::string Shader::loadShader(const char *shaderPath) {
 
     shaderFile.open(shaderPath);
     shaderStream << shaderFile.rdbuf();
-    shaderFile.close();
 
     return shaderStream.str();
 }
