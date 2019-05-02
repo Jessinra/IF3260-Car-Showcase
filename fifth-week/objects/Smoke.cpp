@@ -107,7 +107,8 @@ void Smoke::simulate() {
     float dt = now - lastTime;
 
     for (size_t i = 0; i < nParticles; i++) {
-        positions[i] += velocities[i] * dt + 0.5f * GRAVITY * dt * dt;
+        glm::vec3 brownian(glm::gaussRand(0.0f, dt), glm::gaussRand(0.0f, dt), glm::gaussRand(0.0f, dt));
+        positions[i] += velocities[i] * dt + 0.5f * GRAVITY * dt * dt + RAND_INTENSITY * brownian;
         velocities[i] += GRAVITY * dt;
         ages[i] += glm::max(0.0f, glm::gaussRand(dt, 7 * dt));
     }

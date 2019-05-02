@@ -20,6 +20,7 @@ class Smoke : public Particles {
 
     const glm::vec3 GRAVITY = glm::vec3(0, 0.028, 0);
     const float MAX_LIFETIME = 7.0;
+    const float RAND_INTENSITY = 7.0;
 
    public:
     Smoke(const glm::mat4 &projection, const Camera &camera,
